@@ -1,0 +1,12 @@
+<form
+  [formGroup]="itemForm"
+  (ngSubmit)="onSubmit()"
+  class="todo-item-form"
+>
+  <input
+    formControlName="title"
+    name="newItem"
+    type="text"
+    placeholder="What needs to be done?"
+  />
+</form>

@@ -1,40 +1,36 @@
 import { Component } from '@angular/core';
+import {TodoItem} from '../todo';
+import {TodoService} from '../todo.service';
+import {BehaviorSubject} from 'rxjs';
 
 @Component({
   selector: 'app-todo-list',
   templateUrl: './todo-list.component.html',
-  styleUrls: ['./todo-list.component.scss']
+  styleUrls: ['./todo-list.component.scss'],
+  providers: [TodoService]
 })
 export class TodoListComponent {
   title = 'todo-list';
 
-  items: TodoItem[] = [];
-  newItem = new TodoItem();
+  newTodoItem: TodoItem = new TodoItem();
 
-  addToList() {
-    if (this.newItem.title) {
-      this.newItem.id = (this.items[this.items.length - 1]?.id ?? 0) + 1;
-      this.items.push(this.newItem);
-      this.newItem = new TodoItem();
-    }
+  constructor(private todoService: TodoService) {
   }
 
-  deleteItem(value) {
-    this.items = this.items.filter((element) => {
-      return element != value;
-    });
+  addTodo(newItem): void {
+    this.todoService.addToList(newItem);
+    this.newTodoItem = new TodoItem();
   }
 
-  toggleStatusItem(item) {
-    let currentItem = this.items.find((element) => {
-      return element.id === item.id;
-    });
-    currentItem.status = !currentItem.status;
+  toggleTodoStatus(todo): void {
+    this.todoService.toggleStatusItem(todo);
   }
-}
 
-export class TodoItem {
-  id: number;
-  title: string;
-  status: boolean;
+  deleteTodo(item): void {
+    this.todoService.deleteItem(item.id);
+  }
+
+  get items(): BehaviorSubject<TodoItem[]> {
+    return this.todoService.getAllTodos();
+  }
 }
